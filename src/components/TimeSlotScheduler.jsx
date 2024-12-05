@@ -22,12 +22,14 @@ const TimeSlotScheduler = () => {
 
   // Fetch time slots from the backend
   useEffect(() => {
-    if (!participantId) return;
+    let intervalId;
 
     const fetchTimeSlots = async () => {
+      if (!participantId) return; // Skip if no participantId
+
       try {
-        const startHour = 0; // Start of the first grid hour
-        const endHour = 24; // End of the last grid hour plus 1 hour
+        const startHour = 0;
+        const endHour = 24;
 
         const endDate = new Date(visibleDays[visibleDays.length - 1]);
         endDate.setHours(endHour, 0, 0, 0);
@@ -56,14 +58,18 @@ const TimeSlotScheduler = () => {
       }
     };
 
-    // Initial fetch
-    fetchTimeSlots();
+    // Only set up interval if we have a participantId
+    if (participantId) {
+      fetchTimeSlots(); // Initial fetch
+      intervalId = setInterval(fetchTimeSlots, 500); // 0.5 second
+    }
 
-    // Set up interval for repeated fetches
-    const intervalId = setInterval(fetchTimeSlots, 1000); // 1 second
-
-    // Cleanup function to clear interval when component unmounts
-    return () => clearInterval(intervalId);
+    // Cleanup function to clear interval when component unmounts or dependencies change
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
   }, [participantType, participantId, visibleDays, baseUrl]);
 
   // Calculate how many days can fit based on screen width

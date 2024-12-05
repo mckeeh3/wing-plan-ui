@@ -56,8 +56,31 @@ const FlightReservation = () => {
     return Math.floor(availableWidth / columnWidth);
   };
 
-  // Mock API calls - replace with real API endpoints
-  const fetchTimeSlots = async (studentId, startTime, endTime) => {
+  // Fetch instructors or aircraft
+  const fetchTimeSlotByType = async (startTime, endTime, type) => {
+    try {
+      const response = await fetch(`${baseUrl}/flight/time-slot-view-by-type-and-time-range`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          participantType: type,
+          timeBegin: startTime.toISOString(),
+          timeEnd: endTime.toISOString(),
+        }),
+      });
+
+      if (!response.ok) throw new Error(`Failed to fetch ${type} time slots`);
+      const data = await response.json();
+      return data.timeSlots.filter((slot) => slot.status === 'available');
+    } catch (error) {
+      console.error(`Error fetching ${type} time slots:`, error);
+      return [];
+    }
+  };
+
+  const fetchTimeSlotsByStudentId = async (studentId, startTime, endTime) => {
     try {
       const response = await fetch(`${baseUrl}/flight/time-slot-view-by-participant-and-time-range`, {
         method: 'POST',
@@ -71,58 +94,46 @@ const FlightReservation = () => {
           timeEnd: endTime.toISOString(),
         }),
       });
-
-      if (!response.ok) throw new Error('Failed to fetch time slots');
       const data = await response.json();
-      const slots = data.timeSlots || [];
+      return (data.timeSlots || []).filter((slot) => slot.status === 'available');
+    } catch (error) {
+      console.error('Error fetching student time slots:', error);
+      return [];
+    }
+  };
 
-      const availableSlots = slots.filter((slot) => slot.status === 'available');
+  const fetchTimeSlots = async (studentId, startTime, endTime) => {
+    if (!studentId) return; // Skip if no studentId
 
-      const updatedSlots = await Promise.all(
-        availableSlots.map(async (slot) => {
-          const timeSlot = new Date(slot.startTime);
-          const instructors = await fetchTimeSlotByType(timeSlot, 'instructor');
-          const aircraft = await fetchTimeSlotByType(timeSlot, 'aircraft');
+    try {
+      // Fetch all data in parallel
+      const [studentSlots, instructorSlots, aircraftSlots] = await Promise.all([
+        fetchTimeSlotsByStudentId(studentId, startTime, endTime),
+        fetchTimeSlotByType(startTime, endTime, 'instructor'),
+        fetchTimeSlotByType(startTime, endTime, 'aircraft'),
+      ]);
 
-          return {
-            ...slot,
-            isClickable: instructors.length > 0 && aircraft.length > 0,
-            instructorCount: instructors.length,
-            aircraftCount: aircraft.length,
-          };
-        })
-      );
+      // Process and combine the data
+      const updatedSlots = studentSlots.map((studentSlot) => {
+        const slotTime = new Date(studentSlot.startTime);
+        const slotEndTime = new Date(slotTime.getTime() + 60 * 60 * 1000); // 1 hour later
 
-      console.log('Updated Slots:', updatedSlots); // Debugging output
+        const availableInstructors = instructorSlots.filter((instrSlot) => new Date(instrSlot.startTime).getTime() === slotTime.getTime());
+
+        const availableAircraft = aircraftSlots.filter((acftSlot) => new Date(acftSlot.startTime).getTime() === slotTime.getTime());
+
+        return {
+          ...studentSlot,
+          isClickable: availableInstructors.length > 0 && availableAircraft.length > 0,
+          instructorCount: availableInstructors.length,
+          aircraftCount: availableAircraft.length,
+        };
+      });
+
       setTimeSlots(updatedSlots);
     } catch (error) {
       console.error('Error fetching time slots:', error);
       setTimeSlots([]);
-    }
-  };
-
-  const fetchTimeSlotByType = async (timeSlot, type) => {
-    try {
-      const response = await fetch(`${baseUrl}/flight/time-slot-view-by-type-and-time-range`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          participantType: type,
-          timeBegin: timeSlot.toISOString(),
-          timeEnd: new Date(timeSlot.getTime() + 60 * 60 * 1000).toISOString(), // Assuming 1-hour slots
-        }),
-      });
-
-      if (!response.ok) throw new Error(`Failed to fetch ${type} time slots`);
-      const data = await response.json();
-      const availableSlots = data.timeSlots.filter((slot) => slot.status === 'available');
-
-      return availableSlots;
-    } catch (error) {
-      console.error(`Error fetching ${type} time slots:`, error);
-      return [];
     }
   };
 
@@ -254,9 +265,9 @@ const FlightReservation = () => {
     if (!slot) return '';
 
     if (slot.isClickable) {
-      return 'bg-green-500 bg-opacity-50 hover:bg-opacity-60 cursor-pointer';
+      return 'bg-green-700 bg-opacity-50 hover:bg-green-600 cursor-pointer text-yellow-500';
     } else if (slot.status === 'available') {
-      return 'bg-yellow-500 bg-opacity-50';
+      return 'bg-yellow-700 bg-opacity-50 text-yellow-500';
     }
 
     return '';
