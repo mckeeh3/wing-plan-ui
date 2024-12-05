@@ -290,6 +290,32 @@ const FlightReservation = () => {
     );
   };
 
+  // Add this new effect for periodic refresh
+  useEffect(() => {
+    // Initial fetch
+    if (studentId) {
+      const firstSlot = new Date(visibleDays[0]);
+      firstSlot.setHours(0, 0, 0, 0);
+      const lastSlot = new Date(visibleDays[visibleDays.length - 1]);
+      lastSlot.setHours(23, 59, 59, 999);
+      fetchTimeSlots(studentId, firstSlot, lastSlot);
+    }
+
+    // Set up interval
+    const intervalId = setInterval(() => {
+      if (studentId && visibleDays.length > 0) {
+        const firstSlot = new Date(visibleDays[0]);
+        firstSlot.setHours(0, 0, 0, 0);
+        const lastSlot = new Date(visibleDays[visibleDays.length - 1]);
+        lastSlot.setHours(23, 59, 59, 999);
+        fetchTimeSlots(studentId, firstSlot, lastSlot);
+      }
+    }, 500); // Refresh every 0.5 second
+
+    // Cleanup
+    return () => clearInterval(intervalId);
+  }, [studentId, visibleDays]); // Dependencies
+
   return (
     <div className='flex flex-col h-screen bg-gray-900 text-gray-100'>
       {/* Header Controls */}

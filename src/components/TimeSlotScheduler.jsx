@@ -127,7 +127,7 @@ const TimeSlotScheduler = () => {
     if (!timeSlot) return 'hover:bg-gray-700 cursor-pointer';
 
     const statusClasses = {
-      available: 'bg-green-700 bg-opacity-30 hover:bg-green-600 text-yellow-400',
+      available: 'bg-green-700 bg-opacity-30 hover:bg-green-600 text-yellow-400 cursor-pointer',
       reserved: 'bg-blue-800 bg-opacity-30 hover:bg-blue-700',
       unavailable: 'bg-red-800 bg-opacity-30 cursor-not-allowed',
     };
