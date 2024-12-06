@@ -166,8 +166,21 @@ const FlightReservation = () => {
   };
 
   const fetchReservationDetails = async (reservationId) => {
-    console.log('Fetching reservation details:', reservationId);
-    // TODO: Implement actual API call
+    try {
+      const response = await fetch(`${baseUrl}/flight/reservation/${reservationId}`);
+      if (!response.ok) throw new Error('Failed to fetch reservation details');
+      const data = await response.json();
+      return {
+        id: data.reservationId,
+        time: new Date(data.reservationTime).toLocaleString(),
+        studentId: data.student.participantId,
+        instructorId: data.instructor.participantId,
+        aircraftId: data.aircraft.participantId,
+      };
+    } catch (error) {
+      console.error('Error fetching reservation details:', error);
+      return null;
+    }
   };
 
   // Debounced fetch handler
@@ -189,7 +202,7 @@ const FlightReservation = () => {
   };
 
   // Handle time slot click
-  const handleTimeSlotClick = async (date, hour, status) => {
+  const handleTimeSlotClick = async (date, hour, status, reservationId) => {
     if (isTimeSlotPast(date, hour)) return;
 
     const startTime = new Date(date);
@@ -200,7 +213,9 @@ const FlightReservation = () => {
     if (status === 'available') {
       await createReservation(studentId, startTime);
     } else if (status === 'reserved') {
-      await cancelReservation(timeSlot.reservationId);
+      await cancelReservation(reservationId);
+    } else if (status === 'scheduled') {
+      await cancelReservation(reservationId);
     }
   };
 
@@ -278,7 +293,7 @@ const FlightReservation = () => {
     });
 
     if (!slot) return null;
-    return slot.status;
+    return { status: slot.status, reservationId: slot.reservationId };
   };
 
   const getTimeSlotClass = (date, hour) => {
@@ -393,13 +408,13 @@ const FlightReservation = () => {
                 <div className='text-sm text-center py-2 h-8'>{formatDate(date)}</div>
                 <div className='flex flex-col h-full'>
                   {Array.from({ length: 24 }, (_, hour) => {
-                    const status = getTimeSlotStatus(date, hour);
+                    const slotInfo = getTimeSlotStatus(date, hour);
                     return (
                       <div
                         key={hour}
                         className={`flex-1 border-t border-gray-700 flex flex-col justify-center text-xs text-center ${getTimeSlotClass(date, hour)}`}
-                        onClick={() => handleTimeSlotClick(date, hour, status)}
-                        onMouseEnter={(e) => status === 'reserved' && handleReservationHover(e, 'reservation-id')}
+                        onClick={() => handleTimeSlotClick(date, hour, slotInfo?.status, slotInfo?.reservationId)}
+                        onMouseEnter={(e) => slotInfo?.status === 'scheduled' && handleReservationHover(e, slotInfo.reservationId)}
                         onMouseLeave={handleReservationLeave}
                       >
                         <div>{String(hour).padStart(2, '0')}:00</div>
