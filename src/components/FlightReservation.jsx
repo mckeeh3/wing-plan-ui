@@ -95,7 +95,7 @@ const FlightReservation = () => {
         }),
       });
       const data = await response.json();
-      return (data.timeSlots || []).filter((slot) => slot.status === 'available');
+      return (data.timeSlots || []).filter((slot) => slot.status === 'available' || slot.status === 'scheduled');
     } catch (error) {
       console.error('Error fetching student time slots:', error);
       return [];
@@ -137,9 +137,27 @@ const FlightReservation = () => {
     }
   };
 
-  const createReservation = async (studentId, instructorId, aircraftId, timeSlot) => {
-    console.log('Creating reservation:', { studentId, instructorId, aircraftId, timeSlot });
-    // TODO: Implement actual API call
+  const createReservation = async (studentId, startTime) => {
+    const reservationId = Array.from({ length: 6 }, () => '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random() * 36)]).join('');
+
+    const response = await fetch(`${baseUrl}/flight/booking`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        reservationId,
+        studentId,
+        reservationTime: startTime.toISOString(),
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to create reservation');
+    }
+
+    const data = await response.json();
+    return data;
   };
 
   const cancelReservation = async (reservationId) => {
@@ -174,15 +192,13 @@ const FlightReservation = () => {
   const handleTimeSlotClick = async (date, hour, status) => {
     if (isTimeSlotPast(date, hour)) return;
 
-    const timeSlot = new Date(date);
-    timeSlot.setHours(hour);
+    const startTime = new Date(date);
+    startTime.setHours(hour, 0, 0, 0);
+    const endTime = new Date(startTime);
+    endTime.setHours(hour, 59, 59, 999);
 
     if (status === 'available') {
-      const instructors = await fetchTimeSlotByType(timeSlot, 'instructor');
-      const aircraft = await fetchTimeSlotByType(timeSlot, 'aircraft');
-      if (instructors.length && aircraft.length) {
-        await createReservation(studentId, instructors[0].instructor.id, aircraft[0].aircraft.id, timeSlot);
-      }
+      await createReservation(studentId, startTime);
     } else if (status === 'reserved') {
       await cancelReservation(timeSlot.reservationId);
     }
@@ -268,6 +284,8 @@ const FlightReservation = () => {
       return 'bg-green-700 bg-opacity-50 hover:bg-green-600 cursor-pointer text-yellow-500';
     } else if (slot.status === 'available') {
       return 'bg-yellow-700 bg-opacity-50 text-yellow-500';
+    } else if (slot.status === 'scheduled') {
+      return 'bg-blue-500 bg-opacity-50 hover:bg-blue-400 text-yellow-500 hover:text-yellow-50 cursor-pointer';
     }
 
     return '';
@@ -279,15 +297,26 @@ const FlightReservation = () => {
       return startTime.getTime() === new Date(date).setHours(hour, 0, 0, 0);
     });
 
-    if (!slot || slot.status !== 'available') return null;
+    if (!slot) return null;
 
-    console.log('Slot Counts:', slot.instructorCount, slot.aircraftCount); // Debugging output
+    if (slot.status === 'scheduled') {
+      return (
+        <div className='text-[10px] mt-1'>
+          {slot.status}
+          {slot.reservationId && ` (${slot.reservationId})`}
+        </div>
+      );
+    }
 
-    return (
-      <div className='text-[10px] mt-1'>
-        I-{slot.instructorCount}, A-{slot.aircraftCount}
-      </div>
-    );
+    if (slot.status === 'available') {
+      return (
+        <div className='text-[10px] mt-1'>
+          I-{slot.instructorCount}, A-{slot.aircraftCount}
+        </div>
+      );
+    }
+
+    return null;
   };
 
   // Add this new effect for periodic refresh
