@@ -172,7 +172,7 @@ const FlightReservation = () => {
       const data = await response.json();
       return {
         id: data.reservationId,
-        time: new Date(data.reservationTime).toLocaleString(),
+        time: new Date(data.reservationTime).toLocaleString('en-US', { hour12: false }),
         studentId: data.student.participantId,
         instructorId: data.instructor.participantId,
         aircraftId: data.aircraft.participantId,
@@ -448,17 +448,17 @@ const FlightReservation = () => {
         {/* Reservation Tooltip */}
         {hoveredReservation && (
           <div
-            className='absolute bg-gray-800 p-3 rounded shadow-lg z-50 text-sm'
+            className='absolute bg-gray-800/90 shadow-lg z-50 text-sm border border-gray-600 backdrop-blur-sm'
             style={{
-              left: tooltipPosition.x + 10,
-              top: tooltipPosition.y + 10,
+              left: tooltipPosition.x + 5,
+              top: tooltipPosition.y + 5,
             }}
           >
-            <div>Reservation ID: {hoveredReservation.id}</div>
-            <div>Time: {hoveredReservation.time}</div>
-            <div>Student: {hoveredReservation.studentId}</div>
-            <div>Instructor: {hoveredReservation.instructorId}</div>
-            <div>Aircraft: {hoveredReservation.aircraftId}</div>
+            <div className='bg-blue-400 text-gray-900 font-semibold px-2 py-1'>Reservation: {hoveredReservation.id}</div>
+            <div className='bg-gray-300 text-gray-900 px-2 py-1'>{hoveredReservation.time}</div>
+            <div className='px-2 py-1 text-gray-200'>Student: {hoveredReservation.studentId}</div>
+            <div className='px-2 py-1 text-gray-200'>Instructor: {hoveredReservation.instructorId}</div>
+            <div className='px-2 py-1 text-gray-200'>Aircraft: {hoveredReservation.aircraftId}</div>
           </div>
         )}
       </div>
