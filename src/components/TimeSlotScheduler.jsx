@@ -252,13 +252,17 @@ const TimeSlotScheduler = () => {
                     const isPast = isTimeSlotPast(date, hour);
 
                     return (
-                      <div key={hour} className={`flex-1 border-t border-gray-700 p-1 text-xs text-center ${getTimeSlotClassName(timeSlot, isPast)}`} onClick={() => handleTimeSlotClick(date, hour)}>
-                        <div className='text-center'>{String(hour).padStart(2, '0')}:00</div>
+                      <div
+                        key={hour}
+                        className={`flex-1 border-t border-gray-700 p-0 text-xs flex flex-col justify-center ${getTimeSlotClassName(timeSlot, isPast)}`}
+                        onClick={() => handleTimeSlotClick(date, hour)}
+                      >
+                        <div className='text-center truncate'>{String(hour).padStart(2, '0')}:00</div>
                         {timeSlot && (
-                          <div className='text-xs mt-1 text-center'>
-                            {timeSlot.status}
-                            {timeSlot.reservationId && ` (${timeSlot.reservationId})`}
-                          </div>
+                          <>
+                            <div className='text-xs truncate text-center'>{timeSlot.status}</div>
+                            {timeSlot.reservationId && <div className='text-xs truncate text-center'>({timeSlot.reservationId})</div>}
+                          </>
                         )}
                       </div>
                     );

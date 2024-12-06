@@ -301,9 +301,9 @@ const FlightReservation = () => {
 
     if (slot.status === 'scheduled') {
       return (
-        <div className='text-[10px] mt-1'>
-          {slot.status}
-          {slot.reservationId && ` (${slot.reservationId})`}
+        <div className='text-[10px] flex flex-col'>
+          <div>{slot.status}</div>
+          {slot.reservationId && <div>({slot.reservationId})</div>}
         </div>
       );
     }
@@ -389,7 +389,7 @@ const FlightReservation = () => {
                     return (
                       <div
                         key={hour}
-                        className={`flex-1 border-t border-gray-700 p-1 text-xs text-center ${getTimeSlotClass(date, hour)}`}
+                        className={`flex-1 border-t border-gray-700 flex flex-col justify-center text-xs text-center ${getTimeSlotClass(date, hour)}`}
                         onClick={() => handleTimeSlotClick(date, hour, status)}
                         onMouseEnter={(e) => status === 'reserved' && handleReservationHover(e, 'reservation-id')}
                         onMouseLeave={handleReservationLeave}
