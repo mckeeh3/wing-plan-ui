@@ -242,34 +242,44 @@ const TimeSlotScheduler = () => {
 
         {/* Time Slots Grid */}
         <div className='flex-1 overflow-x-hidden mx-16'>
-          <div className='flex h-full'>
-            {visibleDays.map((date) => (
-              <div key={date.toISOString()} className='flex-1 min-w-[100px] border-l border-gray-700'>
-                <div className='text-sm text-center py-2'>{formatDate(date)}</div>
-                <div className='flex flex-col h-full'>
-                  {Array.from({ length: 24 }, (_, hour) => {
-                    const timeSlot = findTimeSlot(date, hour);
-                    const isPast = isTimeSlotPast(date, hour);
-
-                    return (
-                      <div
-                        key={hour}
-                        className={`flex-1 border-t border-gray-700 p-0 text-xs flex flex-col justify-center ${getTimeSlotClassName(timeSlot, isPast)}`}
-                        onClick={() => handleTimeSlotClick(date, hour)}
-                      >
-                        <div className='text-center truncate'>{String(hour).padStart(2, '0')}:00</div>
-                        {timeSlot && (
-                          <>
-                            <div className='text-xs truncate text-center'>{timeSlot.status}</div>
-                            {timeSlot.reservationId && <div className='text-xs truncate text-center'>({timeSlot.reservationId})</div>}
-                          </>
-                        )}
-                      </div>
-                    );
-                  })}
+          <div className='flex h-full flex-col'>
+            {/* Header row */}
+            <div className='flex'>
+              {visibleDays.map((date) => (
+                <div key={date.toISOString()} className='flex-1 min-w-[100px] border-l border-gray-700'>
+                  <div className='text-sm text-center py-2'>{formatDate(date)}</div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
+            {/* Time slots grid */}
+            <div className='flex flex-1'>
+              {visibleDays.map((date) => (
+                <div key={date.toISOString()} className='flex-1 min-w-[100px] border-l border-gray-700'>
+                  <div className='flex flex-col h-full'>
+                    {Array.from({ length: 24 }, (_, hour) => {
+                      const timeSlot = findTimeSlot(date, hour);
+                      const isPast = isTimeSlotPast(date, hour);
+
+                      return (
+                        <div
+                          key={hour}
+                          className={`flex-1 border-t border-gray-700 p-0 text-xs flex flex-col justify-center ${getTimeSlotClassName(timeSlot, isPast)}`}
+                          onClick={() => handleTimeSlotClick(date, hour)}
+                        >
+                          <div className='text-center truncate'>{String(hour).padStart(2, '0')}:00</div>
+                          {timeSlot && (
+                            <>
+                              <div className='text-xs truncate text-center'>{timeSlot.status}</div>
+                              {timeSlot.reservationId && <div className='text-xs truncate text-center'>({timeSlot.reservationId})</div>}
+                            </>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 

@@ -379,10 +379,10 @@ const FlightReservation = () => {
 
         {/* Time Slots Grid */}
         <div className='flex-1 overflow-x-hidden mx-16'>
-          <div className='flex h-full'>
+          <div className='flex h-[calc(100%-2rem)]'>
             {visibleDays.map((date) => (
               <div key={date.toISOString()} className='flex-1 min-w-[100px] border-l border-gray-700'>
-                <div className='text-sm text-center py-2'>{formatDate(date)}</div>
+                <div className='text-sm text-center py-2 h-8'>{formatDate(date)}</div>
                 <div className='flex flex-col h-full'>
                   {Array.from({ length: 24 }, (_, hour) => {
                     const status = getTimeSlotStatus(date, hour);
