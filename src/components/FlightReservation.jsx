@@ -386,17 +386,17 @@ const FlightReservation = () => {
         {/* Left Scroll Buttons */}
         <div className='absolute left-0 top-0 bottom-0 w-16 flex flex-col justify-center space-y-4 bg-gray-800 bg-opacity-50 p-2'>
           <div className='text-sm text-center mb-4'>{visibleDays.length > 0 && formatScrollDate(visibleDays[0])}</div>
-          <button onClick={() => handleScroll(-1)} className='p-2 bg-gray-700 rounded hover:bg-gray-600'>
-            <ChevronLeft className='w-4 h-4' />
-            1d
+          <button onClick={() => handleScroll(-1)} className='p-2 bg-gray-700 rounded hover:bg-gray-600 flex flex-col items-center justify-center'>
+            <ChevronLeft className='w-5 h-5' />
+            <span>1d</span>
           </button>
-          <button onClick={() => handleScroll(-7)} className='p-2 bg-gray-700 rounded hover:bg-gray-600'>
-            <ChevronLeft className='w-4 h-4' />
-            7d
+          <button onClick={() => handleScroll(-7)} className='p-2 bg-gray-700 rounded hover:bg-gray-600 flex flex-col items-center justify-center'>
+            <ChevronLeft className='w-5 h-5' />
+            <span>7d</span>
           </button>
-          <button onClick={() => handleScroll(-30)} className='p-2 bg-gray-700 rounded hover:bg-gray-600'>
-            <ChevronLeft className='w-4 h-4' />
-            30d
+          <button onClick={() => handleScroll(-30)} className='p-2 bg-gray-700 rounded hover:bg-gray-600 flex flex-col items-center justify-center'>
+            <ChevronLeft className='w-5 h-5' />
+            <span>30d</span>
           </button>
         </div>
 
@@ -431,17 +431,17 @@ const FlightReservation = () => {
         {/* Right Scroll Buttons */}
         <div className='absolute right-0 top-0 bottom-0 w-16 flex flex-col justify-center space-y-4 bg-gray-800 bg-opacity-50 p-2'>
           <div className='text-sm text-center mb-4'>{visibleDays.length > 0 && formatScrollDate(visibleDays[visibleDays.length - 1])}</div>
-          <button onClick={() => handleScroll(1)} className='p-2 bg-gray-700 rounded hover:bg-gray-600'>
-            1d
-            <ChevronRight className='w-4 h-4' />
+          <button onClick={() => handleScroll(1)} className='p-2 bg-gray-700 rounded hover:bg-gray-600 flex flex-col items-center justify-center'>
+            <ChevronRight className='w-5 h-5' />
+            <span>1d</span>
           </button>
-          <button onClick={() => handleScroll(7)} className='p-2 bg-gray-700 rounded hover:bg-gray-600'>
-            7d
-            <ChevronRight className='w-4 h-4' />
+          <button onClick={() => handleScroll(7)} className='p-2 bg-gray-700 rounded hover:bg-gray-600 flex flex-col items-center justify-center'>
+            <ChevronRight className='w-5 h-5' />
+            <span>7d</span>
           </button>
-          <button onClick={() => handleScroll(30)} className='p-2 bg-gray-700 rounded hover:bg-gray-600'>
-            30d
-            <ChevronRight className='w-4 h-4' />
+          <button onClick={() => handleScroll(30)} className='p-2 bg-gray-700 rounded hover:bg-gray-600 flex flex-col items-center justify-center'>
+            <ChevronRight className='w-5 h-5' />
+            <span>30d</span>
           </button>
         </div>
 
