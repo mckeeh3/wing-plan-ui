@@ -246,6 +246,19 @@ const FlightReservation = () => {
     return `${days[date.getDay()]} ${date.getMonth() + 1}/${date.getDate()}`;
   };
 
+  const formatScrollDate = (date) => {
+    if (!date) return '';
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    return (
+      <div className='flex flex-col'>
+        <span>{days[date.getDay()]}</span>
+        <span>
+          {date.getMonth() + 1}/{date.getDate()}
+        </span>
+      </div>
+    );
+  };
+
   const isTimeSlotPast = (date, hour) => {
     const now = new Date();
     const slotTime = new Date(date);
@@ -300,12 +313,7 @@ const FlightReservation = () => {
     if (!slot) return null;
 
     if (slot.status === 'scheduled') {
-      return (
-        <div className='text-[10px] flex flex-col'>
-          <div>{slot.status}</div>
-          {slot.reservationId && <div>({slot.reservationId})</div>}
-        </div>
-      );
+      return <div className='text-[10px] flex flex-col'>{slot.reservationId && <div>({slot.reservationId})</div>}</div>;
     }
 
     if (slot.status === 'available') {
@@ -362,7 +370,7 @@ const FlightReservation = () => {
       <div className='flex flex-1 relative'>
         {/* Left Scroll Buttons */}
         <div className='absolute left-0 top-0 bottom-0 w-16 flex flex-col justify-center space-y-4 bg-gray-800 bg-opacity-50 p-2'>
-          <div className='text-sm text-center mb-4'>{visibleDays.length > 0 && formatDate(visibleDays[0])}</div>
+          <div className='text-sm text-center mb-4'>{visibleDays.length > 0 && formatScrollDate(visibleDays[0])}</div>
           <button onClick={() => handleScroll(-1)} className='p-2 bg-gray-700 rounded hover:bg-gray-600'>
             <ChevronLeft className='w-4 h-4' />
             1d
@@ -407,7 +415,7 @@ const FlightReservation = () => {
 
         {/* Right Scroll Buttons */}
         <div className='absolute right-0 top-0 bottom-0 w-16 flex flex-col justify-center space-y-4 bg-gray-800 bg-opacity-50 p-2'>
-          <div className='text-sm text-center mb-4'>{visibleDays.length > 0 && formatDate(visibleDays[visibleDays.length - 1])}</div>
+          <div className='text-sm text-center mb-4'>{visibleDays.length > 0 && formatScrollDate(visibleDays[visibleDays.length - 1])}</div>
           <button onClick={() => handleScroll(1)} className='p-2 bg-gray-700 rounded hover:bg-gray-600'>
             1d
             <ChevronRight className='w-4 h-4' />

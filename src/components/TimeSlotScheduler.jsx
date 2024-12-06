@@ -103,6 +103,19 @@ const TimeSlotScheduler = () => {
     return `${weekday} ${date.getMonth() + 1}/${date.getDate()}`;
   };
 
+  const formatScrollDate = (date) => {
+    if (!date) return '';
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    return (
+      <div className='flex flex-col'>
+        <span>{days[date.getDay()]}</span>
+        <span>
+          {date.getMonth() + 1}/{date.getDate()}
+        </span>
+      </div>
+    );
+  };
+
   const isTimeSlotPast = (date, hour) => {
     const now = new Date();
     const slotTime = new Date(date);
@@ -208,12 +221,12 @@ const TimeSlotScheduler = () => {
       {/* Header Controls */}
       <div className='p-4 bg-gray-800 border-b border-gray-700 flex justify-between'>
         <div className='flex items-center space-x-4'>
-          <input type='text' placeholder='Participant ID' className='bg-gray-700 text-gray-100 p-2 rounded' value={participantId} onChange={handleParticipantIdChange} />
           <select className='bg-gray-700 text-gray-100 p-2 rounded' value={participantType} onChange={handleParticipantTypeChange}>
             <option value='student'>Student</option>
             <option value='instructor'>Instructor</option>
             <option value='aircraft'>Aircraft</option>
           </select>
+          <input type='text' placeholder='Participant ID' className='bg-gray-700 text-gray-100 p-2 rounded' value={participantId} onChange={handleParticipantIdChange} />
           <h1 className='text-xl font-semibold text-yellow-500'>Plan Your Flight Availability</h1>
         </div>
         <Link to='/reservations' className='p-2 bg-gray-700 rounded hover:bg-gray-600 text-yellow-500 hover:text-white'>
@@ -225,7 +238,7 @@ const TimeSlotScheduler = () => {
       <div className='flex flex-1 relative'>
         {/* Left Scroll Buttons */}
         <div className='absolute left-0 top-0 bottom-0 w-16 flex flex-col justify-center space-y-4 bg-gray-800 bg-opacity-50 p-2'>
-          <div className='text-sm text-center mb-4'>{visibleDays.length > 0 && formatDate(visibleDays[0])}</div>
+          <div className='text-sm text-center mb-4'>{visibleDays.length > 0 && formatScrollDate(visibleDays[0])}</div>
           <button onClick={() => handleScroll(-1)} className='p-2 bg-gray-700 rounded hover:bg-gray-600'>
             <ChevronLeft className='w-4 h-4' />
             1d
@@ -267,12 +280,7 @@ const TimeSlotScheduler = () => {
                           onClick={() => handleTimeSlotClick(date, hour)}
                         >
                           <div className='text-center truncate'>{String(hour).padStart(2, '0')}:00</div>
-                          {timeSlot && (
-                            <>
-                              <div className='text-xs truncate text-center'>{timeSlot.status}</div>
-                              {timeSlot.reservationId && <div className='text-xs truncate text-center'>({timeSlot.reservationId})</div>}
-                            </>
-                          )}
+                          {timeSlot && <>{timeSlot.reservationId && <div className='text-xs truncate text-center'>({timeSlot.reservationId})</div>}</>}
                         </div>
                       );
                     })}
@@ -285,7 +293,7 @@ const TimeSlotScheduler = () => {
 
         {/* Right Scroll Buttons */}
         <div className='absolute right-0 top-0 bottom-0 w-16 flex flex-col justify-center space-y-4 bg-gray-800 bg-opacity-50 p-2'>
-          <div className='text-sm text-center mb-4'>{visibleDays.length > 0 && formatDate(visibleDays[visibleDays.length - 1])}</div>
+          <div className='text-sm text-center mb-4'>{visibleDays.length > 0 && formatScrollDate(visibleDays[visibleDays.length - 1])}</div>
           <button onClick={() => handleScroll(1)} className='p-2 bg-gray-700 rounded hover:bg-gray-600'>
             1d
             <ChevronRight className='w-4 h-4' />
