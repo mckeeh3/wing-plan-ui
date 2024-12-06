@@ -161,8 +161,23 @@ const FlightReservation = () => {
   };
 
   const cancelReservation = async (reservationId) => {
-    console.log('Canceling reservation:', reservationId);
-    // TODO: Implement actual API call
+    try {
+      const response = await fetch(`${baseUrl}/flight/reservation-cancel`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          reservationId,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to cancel reservation');
+      }
+    } catch (error) {
+      console.error('Error canceling reservation:', error);
+    }
   };
 
   const fetchReservationDetails = async (reservationId) => {
