@@ -227,8 +227,6 @@ const FlightReservation = () => {
 
     if (status === 'available') {
       await createReservation(studentId, startTime);
-    } else if (status === 'reserved') {
-      await cancelReservation(reservationId);
     } else if (status === 'scheduled') {
       await cancelReservation(reservationId);
     }
@@ -292,7 +290,7 @@ const FlightReservation = () => {
   const isTimeSlotPast = (date, hour) => {
     const now = new Date();
     const slotTime = new Date(date);
-    slotTime.setHours(hour);
+    slotTime.setHours(hour, 0, 0, 0);
     return slotTime < now;
   };
 
@@ -343,7 +341,7 @@ const FlightReservation = () => {
     if (!slot) return null;
 
     if (slot.status === 'scheduled') {
-      return <div className='text-[10px] flex flex-col'>{slot.reservationId && <div>({slot.reservationId})</div>}</div>;
+      return <div className='text-[10px] flex flex-col'>{slot.reservationId && <div>{slot.reservationId}</div>}</div>;
     }
 
     if (slot.status === 'available') {
@@ -357,7 +355,7 @@ const FlightReservation = () => {
     return null;
   };
 
-  // Add this new effect for periodic refresh
+  // Periodic time slot grid refresh
   useEffect(() => {
     // Initial fetch
     if (studentId) {
@@ -391,7 +389,7 @@ const FlightReservation = () => {
           <input type='text' placeholder='Student ID' className='bg-gray-700 text-gray-100 p-2 rounded' value={studentId} onChange={handleStudentIdChange} />
           <h1 className='text-xl font-semibold text-yellow-500'>Book a flight lesson</h1>
         </div>
-        <Link to='/' className='p-2 bg-gray-700 rounded hover:bg-gray-600 text-yellow-500 hover:text-white'>
+        <Link to={baseUrl.startsWith('https://') ? `/?host=${baseUrl.replace('https://', '')}` : '/'} className='p-2 bg-gray-700 rounded hover:bg-gray-600 text-yellow-500 hover:text-white'>
           Calendar
         </Link>
       </div>
@@ -463,7 +461,7 @@ const FlightReservation = () => {
         {/* Reservation Tooltip */}
         {hoveredReservation && (
           <div
-            className='absolute bg-gray-800/90 shadow-lg z-50 text-sm border border-gray-600 backdrop-blur-sm'
+            className='absolute bg-blue-950/90 shadow-lg z-50 text-sm border border-gray-600 backdrop-blur-sm'
             style={{
               left: tooltipPosition.x + 5,
               top: tooltipPosition.y + 5,

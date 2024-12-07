@@ -10,6 +10,8 @@ const TimeSlotScheduler = () => {
   const [participantId, setParticipantId] = useState('');
   const [hoveredReservation, setHoveredReservation] = useState(null);
   const [baseUrl, setBaseUrl] = useState('http://localhost:9000');
+  const [tooltipData, setTooltipData] = useState(null);
+  const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
 
   // Add URL configuration effect
   useEffect(() => {
@@ -119,7 +121,7 @@ const TimeSlotScheduler = () => {
   const isTimeSlotPast = (date, hour) => {
     const now = new Date();
     const slotTime = new Date(date);
-    slotTime.setHours(hour);
+    slotTime.setHours(hour, 0, 0, 0);
     return slotTime < now;
   };
 
@@ -151,36 +153,42 @@ const TimeSlotScheduler = () => {
   const handleTimeSlotClick = async (date, hour) => {
     const timeSlot = findTimeSlot(date, hour);
     // Return early if the slot is unavailable or already reserved
-    if (timeSlot && timeSlot.status === 'unavailable') {
-      return;
+    if (timeSlot && timeSlot.status === 'available') {
+      handleMakeUnavailable(timeSlot);
+    } else if (timeSlot && timeSlot.status === 'scheduled') {
+      cancelReservation(timeSlot.reservationId);
+    } else {
+      handleMakeAvailable(date, hour);
     }
+  };
 
+  const handleMakeUnavailable = async (timeSlot) => {
     try {
-      // If timeSlot exists and is available, update it to unavailable
-      if (timeSlot && timeSlot.status === 'available') {
-        const response = await fetch(`${baseUrl}/flight/make-time-slot-unavailable`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            timeSlotId: timeSlot.timeSlotId,
-          }),
-        });
+      const response = await fetch(`${baseUrl}/flight/make-time-slot-unavailable`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          timeSlotId: timeSlot.timeSlotId,
+        }),
+      });
 
-        if (!response.ok) {
-          throw new Error('Failed to update time slot');
-        }
-
-        const updatedSlot = await response.json();
-        // Update the timeSlots state with the modified slot
-        setTimeSlots((prevState) => ({
-          timeSlots: prevState.timeSlots.map((slot) => (slot.timeSlotId === timeSlot.timeSlotId ? updatedSlot : slot)),
-        }));
-        return;
+      if (!response.ok) {
+        throw new Error('Failed to update time slot');
       }
 
-      // Make a slot available
+      const updatedSlot = await response.json();
+      setTimeSlots((prevState) => ({
+        timeSlots: prevState.timeSlots.map((slot) => (slot.timeSlotId === timeSlot.timeSlotId ? updatedSlot : slot)),
+      }));
+    } catch (error) {
+      console.error('Error managing time slot:', error);
+    }
+  };
+
+  const handleMakeAvailable = async (date, hour) => {
+    try {
       const response = await fetch(`${baseUrl}/flight/make-time-slot-available`, {
         method: 'POST',
         headers: {
@@ -216,6 +224,58 @@ const TimeSlotScheduler = () => {
     setParticipantId(''); // Clear the input field
   };
 
+  const cancelReservation = async (reservationId) => {
+    try {
+      const response = await fetch(`${baseUrl}/flight/reservation-cancel`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          reservationId,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to cancel reservation');
+      }
+    } catch (error) {
+      console.error('Error canceling reservation:', error);
+    }
+  };
+
+  const fetchReservationDetails = async (reservationId) => {
+    try {
+      const response = await fetch(`${baseUrl}/flight/reservation/${reservationId}`);
+      if (!response.ok) throw new Error('Failed to fetch reservation details');
+      const data = await response.json();
+      return {
+        id: data.reservationId,
+        time: new Date(data.reservationTime).toLocaleString('en-US', { hour12: false }),
+        studentId: data.student.participantId,
+        instructorId: data.instructor.participantId,
+        aircraftId: data.aircraft.participantId,
+      };
+    } catch (error) {
+      console.error('Error fetching reservation details:', error);
+      return null;
+    }
+  };
+
+  const handleTimeSlotHover = async (e, timeSlot) => {
+    if (timeSlot?.status === 'scheduled') {
+      const details = await fetchReservationDetails(timeSlot.reservationId);
+      if (details) {
+        setTooltipData(details);
+        setTooltipPosition({ x: e.clientX, y: e.clientY });
+      }
+    }
+  };
+
+  const handleTimeSlotLeave = () => {
+    setTooltipData(null);
+  };
+
   return (
     <div className='flex flex-col h-screen bg-gray-900 text-gray-100'>
       {/* Header Controls */}
@@ -229,7 +289,10 @@ const TimeSlotScheduler = () => {
           <input type='text' placeholder='Participant ID' className='bg-gray-700 text-gray-100 p-2 rounded' value={participantId} onChange={handleParticipantIdChange} />
           <h1 className='text-xl font-semibold text-yellow-500'>Plan Your Flight Availability</h1>
         </div>
-        <Link to='/reservations' className='p-2 bg-gray-700 rounded hover:bg-gray-600 text-yellow-500 hover:text-white'>
+        <Link
+          to={`/reservations${baseUrl.startsWith('https://') ? `?host=${baseUrl.replace('https://', '')}` : ''}`}
+          className='p-2 bg-gray-700 rounded hover:bg-gray-600 text-yellow-500 hover:text-white'
+        >
           Reservations
         </Link>
       </div>
@@ -278,9 +341,11 @@ const TimeSlotScheduler = () => {
                           key={hour}
                           className={`flex-1 border-t border-gray-700 p-0 text-xs flex flex-col justify-center ${getTimeSlotClassName(timeSlot, isPast)}`}
                           onClick={() => handleTimeSlotClick(date, hour)}
+                          onMouseEnter={(e) => handleTimeSlotHover(e, timeSlot)}
+                          onMouseLeave={handleTimeSlotLeave}
                         >
                           <div className='text-center truncate'>{String(hour).padStart(2, '0')}:00</div>
-                          {timeSlot && <>{timeSlot.reservationId && <div className='text-xs truncate text-center'>({timeSlot.reservationId})</div>}</>}
+                          {timeSlot && <>{timeSlot.reservationId && <div className='text-xs truncate text-center'>{timeSlot.reservationId}</div>}</>}
                         </div>
                       );
                     })}
@@ -308,6 +373,22 @@ const TimeSlotScheduler = () => {
           </button>
         </div>
       </div>
+
+      {tooltipData && (
+        <div
+          className='fixed bg-blue-950/90 text-white rounded shadow-lg z-50 text-sm'
+          style={{
+            left: tooltipPosition.x + 10,
+            top: tooltipPosition.y + 50,
+          }}
+        >
+          <div className='bg-blue-400 text-gray-900 font-semibold px-2 py-1'>Reservation: {tooltipData.id}</div>
+          <div className='bg-gray-300 text-gray-900 px-2 py-1'>{tooltipData.time}</div>
+          <div className='px-2 py-1 text-gray-200'>Student: {tooltipData.studentId}</div>
+          <div className='px-2 py-1 text-gray-200'>Instructor: {tooltipData.instructorId}</div>
+          <div className='px-2 py-1 text-gray-200'>Aircraft: {tooltipData.aircraftId}</div>
+        </div>
+      )}
     </div>
   );
 };
