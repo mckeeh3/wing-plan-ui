@@ -287,7 +287,7 @@ const TimeSlotScheduler = () => {
             <option value='aircraft'>Aircraft</option>
           </select>
           <input type='text' placeholder='Participant ID' className='bg-gray-700 text-gray-100 p-2 rounded' value={participantId} onChange={handleParticipantIdChange} />
-          <h1 className='text-xl font-semibold text-yellow-500'>Plan Your Flight Availability</h1>
+          <h1 className='text-xl font-semibold text-yellow-500'>Plan your flight availability</h1>
         </div>
         <Link
           to={`/reservations${baseUrl.startsWith('https://') ? `?host=${baseUrl.replace('https://', '')}` : ''}`}
