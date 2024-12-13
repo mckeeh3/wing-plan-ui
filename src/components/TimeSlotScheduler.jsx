@@ -30,11 +30,11 @@ const TimeSlotScheduler = () => {
       if (!participantId) return; // Skip if no participantId
 
       try {
-        const startHour = 0;
-        const endHour = 24;
+        const timeBegin = new Date(visibleDays[0]);
+        timeBegin.setHours(0, 0, 0, 0);
 
-        const endDate = new Date(visibleDays[visibleDays.length - 1]);
-        endDate.setHours(endHour, 0, 0, 0);
+        const timeEnd = new Date(visibleDays[visibleDays.length - 1]);
+        timeEnd.setHours(24, 0, 0, 0);
 
         const response = await fetch(`${baseUrl}/flight/time-slot-view-by-participant-and-time-range`, {
           method: 'POST',
@@ -44,8 +44,8 @@ const TimeSlotScheduler = () => {
           body: JSON.stringify({
             participantType: participantType,
             participantId: participantId,
-            timeBegin: visibleDays[0].toISOString(),
-            timeEnd: endDate.toISOString(),
+            timeBegin: timeBegin.toISOString(),
+            timeEnd: timeEnd.toISOString(),
           }),
         });
 

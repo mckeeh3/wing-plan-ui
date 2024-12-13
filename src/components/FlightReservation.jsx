@@ -362,7 +362,7 @@ const FlightReservation = () => {
       const firstSlot = new Date(visibleDays[0]);
       firstSlot.setHours(0, 0, 0, 0);
       const lastSlot = new Date(visibleDays[visibleDays.length - 1]);
-      lastSlot.setHours(23, 59, 59, 999);
+      lastSlot.setHours(24, 0, 0, 0);
       fetchTimeSlots(studentId, firstSlot, lastSlot);
     }
 
