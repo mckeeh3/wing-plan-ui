@@ -12,6 +12,7 @@ const TimeSlotScheduler = () => {
   const [baseUrl, setBaseUrl] = useState('http://localhost:9000');
   const [tooltipData, setTooltipData] = useState(null);
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
+  const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
 
   // Add URL configuration effect
   useEffect(() => {
@@ -288,13 +289,18 @@ const TimeSlotScheduler = () => {
           </select>
           <input type='text' placeholder='Participant ID' className='bg-gray-700 text-gray-100 p-2 rounded' value={participantId} onChange={handleParticipantIdChange} />
           <h1 className='text-xl font-semibold text-yellow-500'>Plan your flight availability</h1>
+          <button onClick={() => setIsHelpModalOpen(true)} className='w-8 h-8 rounded-full bg-yellow-500 text-gray-900 flex items-center justify-center hover:bg-gray-600 hover:text-white'>
+            ?
+          </button>
         </div>
-        <Link
-          to={`/reservations${baseUrl.startsWith('https://') ? `?host=${baseUrl.replace('https://', '')}` : ''}`}
-          className='p-2 bg-gray-700 rounded hover:bg-gray-600 text-yellow-500 hover:text-white'
-        >
-          Reservations
-        </Link>
+        <div className='flex items-center space-x-4'>
+          <Link
+            to={`/reservations${baseUrl.startsWith('https://') ? `?host=${baseUrl.replace('https://', '')}` : ''}`}
+            className='p-2 bg-gray-700 rounded hover:bg-gray-600 text-yellow-500 hover:text-white'
+          >
+            Reservations
+          </Link>
+        </div>
       </div>
 
       {/* Calendar Grid */}
@@ -387,6 +393,28 @@ const TimeSlotScheduler = () => {
           <div className='px-2 py-1 text-gray-200'>Student: {tooltipData.studentId}</div>
           <div className='px-2 py-1 text-gray-200'>Instructor: {tooltipData.instructorId}</div>
           <div className='px-2 py-1 text-gray-200'>Aircraft: {tooltipData.aircraftId}</div>
+        </div>
+      )}
+
+      {/* Help Modal */}
+      {isHelpModalOpen && (
+        <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50'>
+          <div className='bg-gray-800 rounded-lg max-w-2xl w-full p-6 relative'>
+            <button onClick={() => setIsHelpModalOpen(false)} className='absolute top-4 right-4 text-gray-400 hover:text-white'>
+              ✕
+            </button>
+            <h2 className='text-2xl font-bold text-yellow-500 mb-4'>How to Use the Time Slot Scheduler</h2>
+            <div className='text-gray-300 space-y-4 max-h-[70vh] overflow-y-auto'>
+              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+              <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+              <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+            </div>
+            <div className='mt-6 flex justify-end'>
+              <button onClick={() => setIsHelpModalOpen(false)} className='px-4 py-2 bg-gray-700 text-yellow-500 rounded hover:bg-gray-600 hover:text-white'>
+                Close
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

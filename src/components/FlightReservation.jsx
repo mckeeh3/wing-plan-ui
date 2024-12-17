@@ -39,6 +39,7 @@ const FlightReservation = () => {
   const [tooltipTimer, setTooltipTimer] = useState(null);
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
   const [baseUrl, setBaseUrl] = useState('http://localhost:9000');
+  const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
 
   // Add URL configuration effect
   useEffect(() => {
@@ -388,11 +389,34 @@ const FlightReservation = () => {
         <div className='flex items-center space-x-4'>
           <input type='text' placeholder='Student ID' className='bg-gray-700 text-gray-100 p-2 rounded' value={studentId} onChange={handleStudentIdChange} />
           <h1 className='text-xl font-semibold text-yellow-500'>Book a flight lesson</h1>
+          <button onClick={() => setIsHelpModalOpen(true)} className='w-8 h-8 rounded-full bg-yellow-500 text-gray-900 flex items-center justify-center hover:bg-yellow-400 font-bold'>
+            ?
+          </button>
         </div>
         <Link to={baseUrl.startsWith('https://') ? `/?host=${baseUrl.replace('https://', '')}` : '/'} className='p-2 bg-gray-700 rounded hover:bg-gray-600 text-yellow-500 hover:text-white'>
           Calendar
         </Link>
       </div>
+
+      {/* Add the help modal */}
+      {isHelpModalOpen && (
+        <div className='fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4'>
+          <div className='bg-gray-800 rounded-lg max-w-2xl w-full p-6 relative'>
+            <button onClick={() => setIsHelpModalOpen(false)} className='absolute top-4 right-4 text-gray-400 hover:text-white'>
+              ✕
+            </button>
+            <h2 className='text-2xl font-bold text-yellow-500 mb-4'>How to Use Flight Reservation</h2>
+            <div className='text-gray-300 space-y-4'>
+              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+              <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+              <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+            </div>
+            <button onClick={() => setIsHelpModalOpen(false)} className='mt-6 px-4 py-2 bg-yellow-500 text-gray-900 rounded hover:bg-yellow-400'>
+              Close
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Calendar Grid */}
       <div className='flex flex-1 relative'>
