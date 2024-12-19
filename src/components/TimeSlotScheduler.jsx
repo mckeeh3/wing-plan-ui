@@ -403,17 +403,61 @@ const TimeSlotScheduler = () => {
             <button onClick={() => setIsHelpModalOpen(false)} className='absolute top-4 right-4 text-gray-400 hover:text-white'>
               ✕
             </button>
-            <h2 className='text-2xl font-bold text-yellow-500 mb-4'>How to Use the Time Slot Scheduler</h2>
+            <h2 className='text-2xl font-bold text-yellow-500 mb-4'>Managing Availability Schedules</h2>
             <div className='text-gray-300 space-y-4 max-h-[70vh] overflow-y-auto'>
-              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-              <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-              <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+              <section class='mb-8'>
+                <h2 class='text-lg font-semibold text-gray-200 mb-3'>Setting Your Availability</h2>
+                <ol class='list-decimal list-inside space-y-2 text-gray-300'>
+                  <li class='pl-2'>Select your role (Student/Instructor/Aircraft) from the dropdown</li>
+                  <li class='pl-2'>Enter your ID in the text field</li>
+                  <li class='pl-2'>Click any hour slot to mark it as available</li>
+                  <li class='pl-2'>Click again to mark it as unavailable</li>
+                </ol>
+              </section>
+
+              <section class='mb-8'>
+                <h2 class='text-lg font-semibold text-gray-200 mb-3'>Viewing & Canceling Reservations</h2>
+                <ul class='list-disc list-inside space-y-2 text-gray-300'>
+                  <li class='pl-2'>Blue slots show existing reservations</li>
+                  <li class='pl-2'>Hover over a blue slot to see reservation details</li>
+                  <li class='pl-2'>Click a blue slot to cancel the reservation</li>
+                  <li class='pl-2 font-medium text-red-500'>Cancellation is immediate - no confirmation needed</li>
+                </ul>
+              </section>
+
+              <section>
+                <h2 class='text-lg font-semibold text-gray-200 mb-3'>Navigation</h2>
+                <ul class='list-disc list-inside space-y-2 text-gray-300'>
+                  <li class='pl-2'>Use 1d, 7d, or 30d buttons to move forward/backward in time</li>
+                </ul>
+              </section>
+
+              <section class='mt-8 p-4 bg-gray-700 rounded-md'>
+                <h2 class='text-sm font-semibold text-gray-200 mb-3'>Color Guide</h2>
+                <div class='space-y-2'>
+                  <div class='flex items-center'>
+                    <div class='w-4 h-4 bg-green-500 rounded mr-2'></div>
+                    <span class='text-sm text-gray-300'>Available</span>
+                  </div>
+                  <div class='flex items-center'>
+                    <div class='w-4 h-4 bg-gray-800 rounded mr-2'></div>
+                    <span class='text-sm text-gray-300'>Unavailable - no instructor or aircraft available</span>
+                  </div>
+                  <div class='flex items-center'>
+                    <div class='w-4 h-4 bg-blue-500 rounded mr-2'></div>
+                    <span class='text-sm text-gray-300'>Scheduled Reservation</span>
+                  </div>
+                </div>
+              </section>
             </div>
-            <div className='mt-6 flex justify-end'>
+            {/* <div className='mt-6 flex justify-end'>
               <button onClick={() => setIsHelpModalOpen(false)} className='px-4 py-2 bg-gray-700 text-yellow-500 rounded hover:bg-gray-600 hover:text-white'>
                 Close
               </button>
-            </div>
+            </div> */}
+            <button onClick={() => setIsHelpModalOpen(false)} className='mt-6 px-4 py-2 bg-yellow-500 text-gray-900 rounded hover:bg-yellow-400'>
+              Close
+            </button>
           </div>
         </div>
       )}

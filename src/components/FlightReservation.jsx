@@ -398,18 +398,72 @@ const FlightReservation = () => {
         </Link>
       </div>
 
-      {/* Add the help modal */}
+      {/* Help modal */}
       {isHelpModalOpen && (
         <div className='fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4'>
           <div className='bg-gray-800 rounded-lg max-w-2xl w-full p-6 relative'>
             <button onClick={() => setIsHelpModalOpen(false)} className='absolute top-4 right-4 text-gray-400 hover:text-white'>
               ✕
             </button>
-            <h2 className='text-2xl font-bold text-yellow-500 mb-4'>How to Use Flight Reservation</h2>
+            <h2 className='text-2xl font-bold text-yellow-500 mb-4'>Scheduling Flight Training Lessons</h2>
             <div className='text-gray-300 space-y-4'>
-              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-              <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-              <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+              <section class='mb-8'>
+                <h2 class='text-lg font-semibold text-gray-200 mb-3'>Creating Reservations</h2>
+                <ol class='list-decimal list-inside space-y-2 text-gray-300'>
+                  <li class='pl-2'>Enter your student ID</li>
+                  <li class='pl-2'>
+                    Look for available time slots:
+                    <ul class='list-disc list-inside ml-6 mt-2 space-y-1'>
+                      <li class='text-green-700'>Green slots = All participants available</li>
+                      <li class='text-orange-700'>Orange slots = You are available but instructor/aircraft are not</li>
+                    </ul>
+                  </li>
+                  <li class='pl-2'>Click a green slot to create your reservation</li>
+                </ol>
+              </section>
+
+              <section class='mb-8'>
+                <h2 class='text-lg font-semibold text-gray-200 mb-3'>Managing Reservations</h2>
+                <ul class='list-disc list-inside space-y-2 text-gray-300'>
+                  <li class='pl-2'>Hover over blue slots to see reservation details</li>
+                  <li class='pl-2'>Click a blue slot to cancel your reservation</li>
+                  <li class='pl-2 font-medium text-red-500'>Cancellation is immediate - no confirmation needed</li>
+                </ul>
+              </section>
+
+              <section class='mb-8'>
+                <h2 class='text-lg font-semibold text-gray-200 mb-3'>Best Practices</h2>
+                <ul class='list-disc list-inside space-y-2 text-gray-300'>
+                  <li class='pl-2'>Update your availability regularly</li>
+                  <li class='pl-2'>Check reservation details before canceling</li>
+                  <li class='pl-2'>Plan ahead using navigation buttons</li>
+                </ul>
+              </section>
+
+              <section>
+                <h2 class='text-lg font-semibold text-gray-200 mb-3'>Navigation</h2>
+                <ul class='list-disc list-inside space-y-2 text-gray-300'>
+                  <li class='pl-2'>Use 1d, 7d, or 30d buttons to move forward/backward in time</li>
+                </ul>
+              </section>
+
+              <section class='mt-8 p-4 bg-gray-700 rounded-md'>
+                <h2 class='text-sm font-semibold text-gray-200 mb-3'>Color Guide</h2>
+                <div class='space-y-2'>
+                  <div class='flex items-center'>
+                    <div class='w-4 h-4 bg-green-500 rounded mr-2'></div>
+                    <span class='text-sm text-gray-300'>Available to Schedule (All Participants Available)</span>
+                  </div>
+                  <div class='flex items-center'>
+                    <div class='w-4 h-4 bg-orange-500 rounded mr-2'></div>
+                    <span class='text-sm text-gray-300'>Partially Available (Missing Instructor or Aircraft)</span>
+                  </div>
+                  <div class='flex items-center'>
+                    <div class='w-4 h-4 bg-blue-500 rounded mr-2'></div>
+                    <span class='text-sm text-gray-300'>Scheduled Reservation</span>
+                  </div>
+                </div>
+              </section>
             </div>
             <button onClick={() => setIsHelpModalOpen(false)} className='mt-6 px-4 py-2 bg-yellow-500 text-gray-900 rounded hover:bg-yellow-400'>
               Close
