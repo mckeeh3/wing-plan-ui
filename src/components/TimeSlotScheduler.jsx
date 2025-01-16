@@ -172,6 +172,9 @@ const TimeSlotScheduler = () => {
         },
         body: JSON.stringify({
           timeSlotId: timeSlot.timeSlotId,
+          participantType: timeSlot.participantType,
+          participantId: timeSlot.participantId,
+          startTime: timeSlot.startTime,
         }),
       });
 
@@ -196,7 +199,8 @@ const TimeSlotScheduler = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          timeSlotId: crypto.randomUUID(),
+          // timeSlotId: crypto.randomUUID(),
+          timeSlotId: '',
           participantType: participantType,
           participantId: participantId,
           startTime: new Date(date.setHours(hour, 0, 0, 0)).toISOString(),
@@ -450,11 +454,6 @@ const TimeSlotScheduler = () => {
                 </div>
               </section>
             </div>
-            {/* <div className='mt-6 flex justify-end'>
-              <button onClick={() => setIsHelpModalOpen(false)} className='px-4 py-2 bg-gray-700 text-yellow-500 rounded hover:bg-gray-600 hover:text-white'>
-                Close
-              </button>
-            </div> */}
             <button onClick={() => setIsHelpModalOpen(false)} className='mt-6 px-4 py-2 bg-yellow-500 text-gray-900 rounded hover:bg-yellow-400'>
               Close
             </button>

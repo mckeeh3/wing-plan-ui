@@ -23,7 +23,7 @@ The application is built using React and includes real-time updates of reservati
 
 Follow these steps to run the application locally on your machine:
 
-## Running the Akka app locally or on the platform
+## Running the Akka service locally or on the platform
 
 ## Running the UI
 
